@@ -69,7 +69,7 @@ df['Supertrend'] = pta.supertrend(high = df['HA_High'],low=df['HA_Low'],close=df
 
 # === Strategy Logic ===
 initial_capital = 2_00_00_00
-capital = initial_capital 
+capital = 2000000 
 slippage_pct = 0.0001
 target = 300
 stoploss = 50
