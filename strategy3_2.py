@@ -70,7 +70,7 @@ df['Supertrend'] = pta.supertrend(high = df['HA_High'],low=df['HA_Low'],close=df
 # === Strategy Logic ===
 
 initial_capital = 2000000
-leverage = 1
+leverage = 5
 capital = initial_capital*leverage
 
 slippage_pct = 0.0001
@@ -82,7 +82,7 @@ in_position = False
 position_type = None
 entry_price = None
 capital_curve = []
-trades = []
+trades = [] # format of trades [date,time,status,stoploss,target profit,pnl]
 stoplosslength = 50
 targetlength = 300
 print(df.info())
@@ -95,12 +95,16 @@ for i in range(1,len(df)):
         if position_type == "long" and (price>=target or price<=stoploss):
             exit_price = price*(1+slippage_pct)
             pnl = exit_price-entry_price
+            trades.append([row["date"],row["time"],position_type+" ended","None","None",pnl])
             capital = capital+pnl
+            in_position = False
 
         if position_type == "short" and (price<=target or price >=stoploss):
             exit_price = price*(1-slippage_pct)
             pnl = entry_price-exit_price
             capital = capital+pnl
+            trades.append([row["date"],row["time"],position_type+" ended","None","None",pnl])
+            in_position = False
     else:
         if row["Supertrend"] and row["RSI"]>60:
             in_position = True
@@ -108,6 +112,7 @@ for i in range(1,len(df)):
             position_type = "long"
             stoploss = entry_price - stoplosslength
             target = entry_price+targetlength
+            trades.append([row["date"],row["time"],position_type+" started",stoploss,target,"None"])
             continue
         elif not row["Supertrend"] and row["RSI"]<40:
             in_position = True
@@ -115,6 +120,7 @@ for i in range(1,len(df)):
             position_type = "short"
             stoploss = entry_price+stoplosslength
             target = entry_price-targetlength
+            trades.append([row["date"],row["time"],position_type+" started",stoploss,target,"None"])
             continue
     capital_curve.append(capital)
 df["datatime"] = df["date"]+df["time"]
