@@ -1,20 +1,29 @@
 import pandas as pd
 import numpy as np
-import talib as ta
 import matplotlib.pyplot as plt
 
 # Load your data
-df = pd.read_csv("NF_60.csv")  # Ensure you load the data
+df = pd.read_csv("NF_60.csv")
 df.columns = df.columns.str.strip().str.lower()  # Normalize column names
 df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'])
 
-# Calculate ATR using TA-Lib (14-period)
-def calculate_atr(df, period=14):
-    atr = ta.ATR(df['high'], df['low'], df['close'], timeperiod=period)
+# Compute ATR
+def compute_atr(df, period=14):
+    high = df['high']
+    low = df['low']
+    close = df['close']
+
+    tr = pd.concat([
+        high - low,
+        (high - close.shift()).abs(),
+        (low - close.shift()).abs()
+    ], axis=1).max(axis=1)
+
+    atr = tr.rolling(window=period).mean()
     return atr
 
-# Generate Renko chart using ATR for dynamic brick size
-def generate_renko(df, atr, atr_factor=1):
+# Generate Renko using ATR for brick size
+def generate_renko(df, atr, atr_factor=1.5):
     renko = []
     dates = []
     last_price = df['close'].iloc[0]
@@ -37,7 +46,7 @@ def generate_renko(df, atr, atr_factor=1):
 
     return pd.DataFrame({'datetime': dates, 'price': renko})
 
-# Plot Renko chart
+# Plot Renko
 def plot_renko(renko_df, window=300):
     plt.figure(figsize=(14, 6))
 
@@ -59,8 +68,8 @@ def plot_renko(renko_df, window=300):
     plt.tight_layout()
     plt.show()
 
-# Calculate ATR and generate Renko chart
-atr = calculate_atr(df, period=14)
+# Compute ATR and Generate Renko
+atr = compute_atr(df, period=14)
 renko_df = generate_renko(df, atr)
 
 # Plot the last 300 Renko bricks
