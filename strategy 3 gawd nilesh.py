@@ -13,7 +13,6 @@
 # ---
 
 # %%
-# teri maa chodta hai nilesh aur priyam tera baap to chakka hai saale 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -41,7 +40,7 @@ df['RSI'] = RSIIndicator(close=df['HA_Close'], window=14).rsi()
 
 # === Supertrend Calculation ===
 
-df[supertrend],df[supertrenddirection] = ta.supertrend(df["HA_High"],df["HA_Close"],df["HA_Low"],10,3)
+df["supertrend"],df["supertrenddirection"] = ta.supertrend([df["HA_High"],df["HA_Close"]],df["HA_Low"],10,3)
 def calculate_supertrend(df, period=10, multiplier=3):
     hl2 = (df['HA_High'] + df['HA_Low']) / 2
     tr = pd.concat([
