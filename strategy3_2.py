@@ -98,7 +98,7 @@ for i in range(1,len(df)):
             capital = capital+pnl
 
         if position_type == "short" and (price<=target or price >=stoploss):
-            exit_price = price(1+slippage_pct)
+            exit_price = price(1-slippage_pct)
             pnl = entry_price-exit_price
             capital = capital+pnl
     else:
