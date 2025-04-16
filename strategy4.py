@@ -14,7 +14,7 @@ def calculate_atr(df, period=14):
     return atr
 
 # Generate Renko chart using ATR for dynamic brick size
-def generate_renko(df, atr, atr_factor=1.5):
+def generate_renko(df, atr, atr_factor=1):
     renko = []
     dates = []
     last_price = df['close'].iloc[0]
