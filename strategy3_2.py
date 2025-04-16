@@ -93,25 +93,25 @@ for i in range(1,len(df)):
 
     if in_position:
         if position_type == "long" and (price>=target or price<=stoploss):
-            exit_price = price(1+slippage_pct)
+            exit_price = price*(1+slippage_pct)
             pnl = exit_price-entry_price
             capital = capital+pnl
 
         if position_type == "short" and (price<=target or price >=stoploss):
-            exit_price = price(1-slippage_pct)
+            exit_price = price*(1-slippage_pct)
             pnl = entry_price-exit_price
             capital = capital+pnl
     else:
         if row["Supertrend"] and row["RSI"]>60:
             in_position = True
-            entry_price = price(1+slippage_pct)
+            entry_price = price*(1+slippage_pct)
             position_type = "long"
             stoploss = entry_price - stoplosslength
             target = entry_price+targetlength
             continue
         elif not row["Supertrend"] and row["RSI"]<40:
             in_position = True
-            entry_price = price(1 - slippage_pct)
+            entry_price = price*(1 - slippage_pct)
             position_type = "short"
             stoploss = entry_price+stoplosslength
             target = entry_price-targetlength
