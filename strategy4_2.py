@@ -11,9 +11,9 @@ def calc_atr(df,period = 14):
     low = df['low']
     close = df['close']
     sumoftr = 0 
-    df["ATR"] = None
+    df["ATR"] = 0
     for i in range(0,period):
-        sumoftr = df['high'].iloc[i]-df["low"].iloc[i]
+        sumoftr = sumoftr+ (df['high'].iloc[i]-df["low"].iloc[i])
     df["ATR"].iloc[period-1] = sumoftr/period
     starter = 0
     for i in range(period,len(df)):
