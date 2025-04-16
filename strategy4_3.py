@@ -2,11 +2,11 @@ import pandas as pd
 from stocktrends import Renko
 import numpy as np
 # Read CSV, strip out the time 00:00, sort to DESC
-data = pd.read_csv('NF_60.csv', usecols=[0,1,2,3,4])
+data = pd.read_csv('NF_60.csv', usecols=[0,1,2,3,4,5,6])
 data['date'] = data['date'].str.split(' ').str[0]
 df = data.sort_index(ascending=False)
 
-n_data = pd.read_csv('NF_60.csv', usecols=[0,1,2,3,4])
+n_data = pd.read_csv('NF_60.csv', usecols=[0,1,2,3,4,5,6])
 n_data['date'] = n_data['date'].str.split(' ').str[0]
 n_df = n_data.sort_index(ascending=False)
 print(n_df.info())
