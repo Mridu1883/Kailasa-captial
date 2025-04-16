@@ -13,7 +13,7 @@
 # ---
 
 # %%
-# mkb bkc 
+# teri maa chodta hai nilesh aur priyam tera baap to chakka hai saale 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
