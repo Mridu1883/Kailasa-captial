@@ -132,6 +132,7 @@ print(f"Final Capital: ₹{capital:,.2f}")
 print(f"Total Trades: {len(positions)}")
 print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
 print(f"Calmar Ratio: {calmar_ratio:.2f}")
+print(f"Max Draw Down: {max_drawdown:.2f}")
 
 
 # %%
