@@ -39,7 +39,7 @@ df = heikin_ashi(df)
 df['RSI'] = RSIIndicator(close=df['HA_Close'], window=14).rsi()
 
 # === Supertrend Calculation ===
-print(pta.supertrend(high = df['HA_High'],low=df['HA_Low'],close=df['HA_Close'],length=10,multiplier=3)["SUPERTl_10.3.0"])
+print(pta.supertrend(high = df['HA_High'],low=df['HA_Low'],close=df['HA_Close'],length=10,multiplier=3).columns)
 def calculate_supertrend(df, period=10, multiplier=3):
     hl2 = (df['HA_High'] + df['HA_Low']) / 2
     tr = pd.concat([
