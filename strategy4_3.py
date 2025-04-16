@@ -6,7 +6,7 @@ data = pd.read_csv('NF_60.csv', usecols=[0,1,2,3,4])
 data['date'] = data['date'].str.split(' ').str[0]
 df = data.sort_index(ascending=False)
 
-n_data = pd.read_csv('SPX500m.lmx_60.csv', usecols=[0,1,2,3,4])
+n_data = pd.read_csv('NF_60.csv', usecols=[0,1,2,3,4])
 n_data['date'] = n_data['date'].str.split(' ').str[0]
 n_df = n_data.sort_index(ascending=False)
 adj_close = n_df.iloc[-1]['close']
