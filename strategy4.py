@@ -34,38 +34,29 @@ def generate_renko(df, brick_size):
     return pd.DataFrame({'datetime': dates, 'price': renko})
 
 
-def plot_renko(renko_df):
-    plt.figure(figsize=(12, 6))
 
-    up = []
-    down = []
+def plot_renko(renko_df, window=300):
+    plt.figure(figsize=(14, 6))
 
-    for i in range(1, len(renko_df)):
-        if renko_df['price'].iloc[i] > renko_df['price'].iloc[i - 1]:
-            up.append(i)
-        else:
-            down.append(i)
+    # Use only the last 'window' bricks
+    renko_df = renko_df.iloc[-window:].reset_index(drop=True)
 
-    up = np.array(up)
-    down = np.array(down)
+    prices = renko_df['price'].values
+    indices = np.arange(len(prices))
 
-    # Calculate differences and bottoms
-    up_heights = renko_df['price'].iloc[up].values - renko_df['price'].iloc[up - 1].values
-    up_bottoms = renko_df['price'].iloc[up - 1].values
+    colors = ['green' if prices[i] > prices[i - 1] else 'red' for i in range(1, len(prices))]
+    heights = prices[1:] - prices[:-1]
+    bottoms = prices[:-1]
 
-    down_heights = renko_df['price'].iloc[down].values - renko_df['price'].iloc[down - 1].values
-    down_bottoms = renko_df['price'].iloc[down - 1].values
+    plt.bar(indices[1:], heights, bottom=bottoms, color=colors, width=1.0)
 
-    # Plot
-    plt.bar(up, up_heights, bottom=up_bottoms, color='green', label='Up')
-    plt.bar(down, down_heights, bottom=down_bottoms, color='red', label='Down')
-
-    plt.title("Renko Chart")
+    plt.title(f"Renko Chart (Last {window} Bricks)")
     plt.xlabel("Bricks")
     plt.ylabel("Price")
-    plt.legend()
     plt.grid(True)
+    plt.tight_layout()
     plt.show()
+
 # Run everything
 brick_size = 10
 renko_df = generate_renko(df, brick_size)
