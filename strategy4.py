@@ -3,12 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 df = pd.read_csv("NF_60.csv")
 df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'])
+
 def generate_renko(df, brick_size):
     renko = []
     dates = []
     last_price = df['Close'].iloc[0]
     renko.append(last_price)
-    dates.append(df['Date'].iloc[0])
+    dates.append(df['datetime'].iloc[0])  # <-- fix here
     
     for i in range(1, len(df)):
         price = df['Close'].iloc[i]
@@ -18,10 +19,10 @@ def generate_renko(df, brick_size):
             direction = np.sign(diff)
             last_price += direction * brick_size
             renko.append(last_price)
-            dates.append(df['Date'].iloc[i])
+            dates.append(df['datetime'].iloc[i])  # <-- and fix here too
             diff = price - last_price
 
-    return pd.DataFrame({'Date': dates, 'Price': renko})
+    return pd.DataFrame({'datetime': dates, 'Price': renko})
 
 def plot_renko(renko_df):
     plt.figure(figsize=(12, 6))
