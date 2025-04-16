@@ -71,7 +71,7 @@ df['Supertrend'] = pta.supertrend(high = df['HA_High'],low=df['HA_Low'],close=df
 initial_capital = 2_00_00_00
 capital = initial_capital 
 slippage_pct = 0.0001
-target = 300
+target = 3000
 stoploss = 50
 
 positions = []
