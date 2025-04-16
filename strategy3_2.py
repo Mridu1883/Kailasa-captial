@@ -90,10 +90,14 @@ for i in range(1,len(df)):
 
     if in_position:
         if position_type == "long" and (price>=target or price<=stoploss):
-            pass
-        if position_type == "short" and (price<=target or price >=stoploss):
-            pass
+            exit_price = price
+            pnl = exit_price-entry_price
+            capital = capital+pnl
 
+        if position_type == "short" and (price<=target or price >=stoploss):
+            exit_price = price
+            pnl = entry_price-exit_price
+            capital = capital+pnl
     else:
         if row["Supertrend"] and row["RSI"]>60:
             in_position = True
@@ -101,53 +105,18 @@ for i in range(1,len(df)):
             position_type = "long"
             stoploss = entry_price - stoplosslength
             target = entry_price+targetlength
+            continue
         elif not row["Supertrend"] and row["RSI"]<40:
             in_position = True
             entry_price = price
             position_type = "short"
             stoploss = entry_price+stoplosslength
             target = entry_price-targetlength
-
-for i in range(1, len(df)):
-    row = df.iloc[i]
-    prev_row = df.iloc[i - 1]
-    price = row['HA_Close']
-
-    # Exit logic
-    if in_position:
-        move = price - entry_price if position_type == 'long' else entry_price - price
-        if move >= target or move <= -stoploss:
-            exit_price = price * (1 - slippage_pct if position_type == 'long' else 1 + slippage_pct)
-            profit = (exit_price - entry_price) if position_type == 'long' else (entry_price - exit_price)
-            capital += profit
-            positions.append(profit)
-            in_position = False
-            capital_curve.append(capital)
             continue
-
-    # Entry logic
-    if not in_position:
-        if row['Supertrend'] and row['RSI'] > 60:
-            entry_price = price * (1 + slippage_pct)
-            position_type = 'long'
-            in_position = True
-        elif not row['Supertrend'] and row['RSI'] < 40:
-            entry_price = price * (1 - slippage_pct)
-            position_type = 'short'
-            in_position = True
-
     capital_curve.append(capital)
-
-# === Performance Metrics ===
-returns = pd.Series(positions)
-daily_returns = returns / initial_capital
-sharpe_ratio = np.mean(daily_returns) / np.std(daily_returns) * np.sqrt(252) if len(daily_returns) > 1 else 0
-max_drawdown = np.max(np.maximum.accumulate(capital_curve) - capital_curve)
-calmar_ratio = (capital_curve[-1] - initial_capital) / max_drawdown if max_drawdown != 0 else 0
-
-# === Plot Equity Curve ===
+df["datatime"] = df["date"]+df["time"]
 plt.figure(figsize=(12,6))
-plt.plot(capital_curve, label='Equity Curve', color='green')
+plt.plot(capital_curve,df["datatime"], label='Equity Curve', color='green')
 plt.title("Equity Curve")
 plt.xlabel("Time")
 plt.ylabel("Capital")
@@ -155,13 +124,61 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-# === Print Metrics ===
-print(f"Final Capital: ₹{capital:,.2f}")
-print(f"Total Trades: {len(positions)}")
-print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
-print(f"Calmar Ratio: {calmar_ratio:.2f}")
-print(f"Max Draw Down: {max_drawdown:.2f}")
-
+#
+#for i in range(1, len(df)):
+#    row = df.iloc[i]
+#    prev_row = df.iloc[i - 1]
+#    price = row['HA_Close']
+#
+#    # Exit logic
+#    if in_position:
+#        move = price - entry_price if position_type == 'long' else entry_price - price
+#        if move >= target or move <= -stoploss:
+#            exit_price = price * (1 - slippage_pct if position_type == 'long' else 1 + slippage_pct)
+#            profit = (exit_price - entry_price) if position_type == 'long' else (entry_price - exit_price)
+#            capital += profit
+#            positions.append(profit)
+#            in_position = False
+#            capital_curve.append(capital)
+#            continue
+#
+#    # Entry logic
+#    if not in_position:
+#        if row['Supertrend'] and row['RSI'] > 60:
+#            entry_price = price * (1 + slippage_pct)
+#            position_type = 'long'
+#            in_position = True
+#        elif not row['Supertrend'] and row['RSI'] < 40:
+#            entry_price = price * (1 - slippage_pct)
+#            position_type = 'short'
+#            in_position = True
+#
+#    capital_curve.append(capital)
+#
+## === Performance Metrics ===
+#returns = pd.Series(positions)
+#daily_returns = returns / initial_capital
+#sharpe_ratio = np.mean(daily_returns) / np.std(daily_returns) * np.sqrt(252) if len(daily_returns) > 1 else 0
+#max_drawdown = np.max(np.maximum.accumulate(capital_curve) - capital_curve)
+#calmar_ratio = (capital_curve[-1] - initial_capital) / max_drawdown if max_drawdown != 0 else 0
+#
+## === Plot Equity Curve ===
+#plt.figure(figsize=(12,6))
+#plt.plot(capital_curve, label='Equity Curve', color='green')
+#plt.title("Equity Curve")
+#plt.xlabel("Time")
+#plt.ylabel("Capital")
+#plt.legend()
+#plt.grid(True)
+#plt.show()
+#
+## === Print Metrics ===
+#print(f"Final Capital: ₹{capital:,.2f}")
+#print(f"Total Trades: {len(positions)}")
+#print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
+#print(f"Calmar Ratio: {calmar_ratio:.2f}")
+#print(f"Max Draw Down: {max_drawdown:.2f}")
+#
 
 # %%
 
