@@ -125,7 +125,7 @@ for i in range(1,len(df)):
     capital_curve.append(capital)
 df["datatime"] = df["date"]+df["time"]
 tradesdf = pd.DataFrame(trades,columns=['date','time','status','stoploss','target profit','pnl'])
-tradesdf.to_csv("out", sep='\t')
+tradesdf.to_csv("out.csv", sep='\t')
 print(capital)
 #print(len(capital_curve),len(df["datetime"]))
 #plt.figure(figsize=(12,6))
