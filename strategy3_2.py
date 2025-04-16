@@ -117,7 +117,8 @@ for i in range(1,len(df)):
 df["datatime"] = df["date"]+df["time"]
 print(len(capital_curve),len(df["datetime"]))
 plt.figure(figsize=(12,6))
-plt.plot(capital_curve,df["datatime"][1:-1], label='Equity Curve', color='green')
+number = len(df["datetime"])
+plt.plot(capital_curve,df["datatime"][1:number-1], label='Equity Curve', color='green')
 plt.title("Equity Curve")
 plt.xlabel("Time")
 plt.ylabel("Capital")
