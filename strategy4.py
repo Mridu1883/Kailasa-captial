@@ -60,7 +60,7 @@ def generate_renko(df, atr, atr_factor=1.5):
 
     return renko_df
 # Plot Renko
-def plot_renko(renko_df, window=300):
+def plot_renko(renko_df, window=50):
     plt.figure(figsize=(14, 6))
 
     renko_df = renko_df.iloc[-window:].reset_index(drop=True)
