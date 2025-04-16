@@ -86,4 +86,4 @@ atr = compute_atr(df, period=14)
 renko_df = generate_renko(df, atr)
 
 # Plot the last 300 Renko bricks
-plot_renko(renko_df, window=300)
+plot_renko(renko_df, window=50)
