@@ -40,39 +40,38 @@ df['RSI'] = RSIIndicator(close=df['HA_Close'], window=14).rsi()
 
 # === Supertrend Calculation ===
 df['Supertrend'] = pta.supertrend(high = df['HA_High'],low=df['HA_Low'],close=df['HA_Close'],length=10,multiplier=3)["SUPERTd_10_3.0"]
-print(df.columns)
-def calculate_supertrend(df, period=10, multiplier=3):
-    hl2 = (df['HA_High'] + df['HA_Low']) / 2
-    tr = pd.concat([
-        df['HA_High'] - df['HA_Low'],
-        abs(df['HA_High'] - df['HA_Close'].shift()),
-        abs(df['HA_Low'] - df['HA_Close'].shift())
-    ], axis=1).max(axis=1)
-    atr = tr.rolling(period).mean()
-
-    upperband = hl2 + multiplier * atr
-    lowerband = hl2 - multiplier * atr
-    supertrend = [True] * len(df)
-
-    for i in range(1, len(df)):
-        if df['HA_Close'][i] > upperband[i-1]:
-            supertrend[i] = True
-        elif df['HA_Close'][i] < lowerband[i-1]:
-            supertrend[i] = False
-        else:
-            supertrend[i] = supertrend[i-1]
-
-    # print(supertrend)
-    df['Supertrend'] = supertrend
-    return df
-
+#def calculate_supertrend(df, period=10, multiplier=3):
+#    hl2 = (df['HA_High'] + df['HA_Low']) / 2
+#    tr = pd.concat([
+#        df['HA_High'] - df['HA_Low'],
+#        abs(df['HA_High'] - df['HA_Close'].shift()),
+#        abs(df['HA_Low'] - df['HA_Close'].shift())
+#    ], axis=1).max(axis=1)
+#    atr = tr.rolling(period).mean()
+#
+#    upperband = hl2 + multiplier * atr
+#    lowerband = hl2 - multiplier * atr
+#    supertrend = [True] * len(df)
+#
+#    for i in range(1, len(df)):
+#        if df['HA_Close'][i] > upperband[i-1]:
+#            supertrend[i] = True
+#        elif df['HA_Close'][i] < lowerband[i-1]:
+#            supertrend[i] = False
+#        else:
+#            supertrend[i] = supertrend[i-1]
+#
+#    # print(supertrend)
+#    df['Supertrend'] = supertrend
+#    return df
+#
 # df = calculate_supertrend(df)
 
 # === Strategy Logic ===
 initial_capital = 2_00_00_00
 capital = initial_capital 
 slippage_pct = 0.0001
-target = 200
+target = 300
 stoploss = 50
 
 positions = []
