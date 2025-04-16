@@ -17,7 +17,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from ta.momentum import RSIIndicator
-import ta_py as ta
+import pandas_ta as pta
 # Load data
 df = pd.read_csv("NF_60.csv")
 df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'])
@@ -39,10 +39,7 @@ df = heikin_ashi(df)
 df['RSI'] = RSIIndicator(close=df['HA_Close'], window=14).rsi()
 
 # === Supertrend Calculation ===
-
-# df["supertrend"],df["supertrenddirection"] = ta.supertrend([df["HA_High"],df["HA_Close"],df["HA_Low"]],10,3)
-print(ta.supertrend([df["HA_High"],df["HA_Close"],df["HA_Low"]],10,3))
-
+pta.supertrend(high = df['HA_High'],low=df['low'],close=df['close'],length=10,multiplier=3)
 def calculate_supertrend(df, period=10, multiplier=3):
     hl2 = (df['HA_High'] + df['HA_Low']) / 2
     tr = pd.concat([
