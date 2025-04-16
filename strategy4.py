@@ -23,29 +23,42 @@ def compute_atr(df, period=14):
     return atr
 
 # Generate Renko using ATR for brick size
-def generate_renko(df, atr, atr_factor=1.5):
-    renko = []
-    dates = []
-    last_price = df['close'].iloc[0]
-    renko.append(last_price)
-    dates.append(df['datetime'].iloc[0])
 
-    # Calculate the brick size based on the latest ATR value
+def generate_renko(df, atr, atr_factor=1.5):
+    renko_prices = []
+    renko_dates = []
+    renko_directions = []
+
+    last_price = df['close'].iloc[0]
+    last_direction = 0
+    renko_prices.append(last_price)
+    renko_dates.append(df['datetime'].iloc[0])
+    renko_directions.append(0)
+
+    # Use final ATR as static brick size
     brick_size = atr.iloc[-1] * atr_factor
 
     for i in range(1, len(df)):
         price = df['close'].iloc[i]
+        datetime = df['datetime'].iloc[i]
         diff = price - last_price
+        bricks = int(diff / brick_size)  # number of bricks to add
 
-        while abs(diff) >= brick_size:
-            direction = np.sign(diff)
+        while abs(bricks) >= 1:
+            direction = int(np.sign(bricks))
             last_price += direction * brick_size
-            renko.append(last_price)
-            dates.append(df['datetime'].iloc[i])
-            diff = price - last_price
+            renko_prices.append(last_price)
+            renko_dates.append(datetime)
+            renko_directions.append(direction)
+            bricks -= direction  # reduce brick count
 
-    return pd.DataFrame({'datetime': dates, 'price': renko})
+    renko_df = pd.DataFrame({
+        'datetime': renko_dates,
+        'price': renko_prices,
+        'direction': renko_directions
+    })
 
+    return renko_df
 # Plot Renko
 def plot_renko(renko_df, window=300):
     plt.figure(figsize=(14, 6))
