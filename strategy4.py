@@ -67,6 +67,8 @@ def plot_renko(renko_df):
     plt.grid(True)
     plt.show()
 # Run everything
-brick_size = 10
+brick_size = 2
 renko_df = generate_renko(df, brick_size)
+print(renko_df.head())
+print(f"Renko bricks generated: {len(renko_df)}")
 plot_renko(renko_df)
