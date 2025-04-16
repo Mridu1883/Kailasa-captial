@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 # Load your data
 df = pd.read_csv("NF_60.csv")
+print(df.info())
 df['datetime'] = pd.to_datetime(df['Date'] + ' ' + df['Time'])
 
 def calc_atr(df,period = 14):
