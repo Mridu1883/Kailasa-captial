@@ -82,7 +82,7 @@ in_position = False
 position_type = None
 entry_price = None
 capital_curve = []
-trades = [] # format of trades [date,time,status,stoploss,target profit,pnl]
+trades = [] # format of trades ['date','time','status','stoploss','target profit','pnl']
 stoplosslength = 50
 targetlength = 300
 print(df.info())
@@ -124,6 +124,8 @@ for i in range(1,len(df)):
             continue
     capital_curve.append(capital)
 df["datatime"] = df["date"]+df["time"]
+tradesdf = pd.DataFrame(trades,columns=['date','time','status','stoploss','target profit','pnl'])
+tradesdf.to_csv("out", sep='\t')
 print(capital)
 #print(len(capital_curve),len(df["datetime"]))
 #plt.figure(figsize=(12,6))
