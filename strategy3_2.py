@@ -115,16 +115,17 @@ for i in range(1,len(df)):
             continue
     capital_curve.append(capital)
 df["datatime"] = df["date"]+df["time"]
-print(len(capital_curve),len(df["datetime"]))
-plt.figure(figsize=(12,6))
-number = len(df["datetime"])
-plt.plot(capital_curve,df["datatime"][1:number-1], label='Equity Curve', color='green')
-plt.title("Equity Curve")
-plt.xlabel("Time")
-plt.ylabel("Capital")
-plt.legend()
-plt.grid(True)
-plt.show()
+print(capital)
+#print(len(capital_curve),len(df["datetime"]))
+#plt.figure(figsize=(12,6))
+#number = len(df["datetime"])
+#plt.plot(capital_curve,df["datatime"][1:number-1], label='Equity Curve', color='green')
+#plt.title("Equity Curve")
+#plt.xlabel("Time")
+#plt.ylabel("Capital")
+#plt.legend()
+#plt.grid(True)
+#plt.show()
 
 #
 #for i in range(1, len(df)):
