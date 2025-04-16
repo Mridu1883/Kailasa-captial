@@ -1,28 +1,37 @@
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+
+# Load data and clean up column names just in case
 df = pd.read_csv("NF_60.csv")
+df.columns = df.columns.str.strip().str.lower()  # make all lowercase for consistency
+
+# Combine date and time into a datetime column
 df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'])
+
+# Sort by datetime (just in case)
+df = df.sort_values('datetime').reset_index(drop=True)
 
 def generate_renko(df, brick_size):
     renko = []
     dates = []
-    last_price = df['Close'].iloc[0]
+    last_price = df['close'].iloc[0]  # using lowercase column name
     renko.append(last_price)
-    dates.append(df['datetime'].iloc[0])  # <-- fix here
+    dates.append(df['datetime'].iloc[0])
     
     for i in range(1, len(df)):
-        price = df['Close'].iloc[i]
+        price = df['close'].iloc[i]
         diff = price - last_price
 
         while abs(diff) >= brick_size:
             direction = np.sign(diff)
             last_price += direction * brick_size
             renko.append(last_price)
-            dates.append(df['datetime'].iloc[i])  # <-- and fix here too
+            dates.append(df['datetime'].iloc[i])
             diff = price - last_price
 
-    return pd.DataFrame({'datetime': dates, 'Price': renko})
+    return pd.DataFrame({'datetime': dates, 'price': renko})
 
 def plot_renko(renko_df):
     plt.figure(figsize=(12, 6))
@@ -31,15 +40,15 @@ def plot_renko(renko_df):
     down = []
 
     for i in range(1, len(renko_df)):
-        if renko_df['Price'].iloc[i] > renko_df['Price'].iloc[i-1]:
+        if renko_df['price'].iloc[i] > renko_df['price'].iloc[i-1]:
             up.append(i)
         else:
             down.append(i)
 
-    plt.bar(up, renko_df['Price'].iloc[up] - renko_df['Price'].iloc[np.array(up)-1], 
-            bottom=renko_df['Price'].iloc[np.array(up)-1], color='green', label='Up')
-    plt.bar(down, renko_df['Price'].iloc[down] - renko_df['Price'].iloc[np.array(down)-1], 
-            bottom=renko_df['Price'].iloc[np.array(down)-1], color='red', label='Down')
+    plt.bar(up, renko_df['price'].iloc[up] - renko_df['price'].iloc[np.array(up)-1], 
+            bottom=renko_df['price'].iloc[np.array(up)-1], color='green', label='Up')
+    plt.bar(down, renko_df['price'].iloc[down] - renko_df['price'].iloc[np.array(down)-1], 
+            bottom=renko_df['price'].iloc[np.array(down)-1], color='red', label='Down')
 
     plt.title("Renko Chart")
     plt.xlabel("Bricks")
@@ -48,6 +57,7 @@ def plot_renko(renko_df):
     plt.grid(True)
     plt.show()
 
-brick_size = 10  # you can adjust this
+# Run everything
+brick_size = 10
 renko_df = generate_renko(df, brick_size)
 plot_renko(renko_df)
