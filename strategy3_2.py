@@ -79,6 +79,34 @@ in_position = False
 position_type = None
 entry_price = None
 capital_curve = []
+trades = []
+stoplosslength = 50
+targetlength = 300
+print(df.info())
+for i in range(1,len(df)):
+    row = df.iloc[i]
+    prev_row= df.iloc[i-1]
+    price = row["HA_Close"]
+
+    if in_position:
+        if position_type == "long" and (price>=target or price<=stoploss):
+            pass
+        if position_type == "short" and (price<=target or price >=stoploss):
+            pass
+
+    else:
+        if row["Supertrend"] and row["RSI"]>60:
+            in_position = True
+            entry_price = price
+            position_type = "long"
+            stoploss = entry_price - stoplosslength
+            target = entry_price+targetlength
+        elif not row["Supertrend"] and row["RSI"]<40:
+            in_position = True
+            entry_price = price
+            position_type = "short"
+            stoploss = entry_price+stoplosslength
+            target = entry_price-targetlength
 
 for i in range(1, len(df)):
     row = df.iloc[i]
