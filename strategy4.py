@@ -3,23 +3,37 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Load data and clean up column names just in case
+# Load your data
 df = pd.read_csv("NF_60.csv")
-df.columns = df.columns.str.strip().str.lower()  # make all lowercase for consistency
-
-# Combine date and time into a datetime column
+df.columns = df.columns.str.strip().str.lower()  # Normalize column names
 df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'])
 
-# Sort by datetime (just in case)
-df = df.sort_values('datetime').reset_index(drop=True)
+# Compute ATR
+def compute_atr(df, period=14):
+    high = df['high']
+    low = df['low']
+    close = df['close']
 
-def generate_renko(df, brick_size):
+    tr = pd.concat([
+        high - low,
+        (high - close.shift()).abs(),
+        (low - close.shift()).abs()
+    ], axis=1).max(axis=1)
+
+    atr = tr.rolling(window=period).mean()
+    return atr
+
+# Generate Renko using ATR for brick size
+def generate_renko(df, atr, atr_factor=1.5):
     renko = []
     dates = []
-    last_price = df['close'].iloc[0]  # using lowercase column name
+    last_price = df['close'].iloc[0]
     renko.append(last_price)
     dates.append(df['datetime'].iloc[0])
-    
+
+    # Calculate the brick size based on the latest ATR value
+    brick_size = atr.iloc[-1] * atr_factor
+
     for i in range(1, len(df)):
         price = df['close'].iloc[i]
         diff = price - last_price
@@ -33,12 +47,10 @@ def generate_renko(df, brick_size):
 
     return pd.DataFrame({'datetime': dates, 'price': renko})
 
-
-
+# Plot Renko
 def plot_renko(renko_df, window=300):
     plt.figure(figsize=(14, 6))
 
-    # Use only the last 'window' bricks
     renko_df = renko_df.iloc[-window:].reset_index(drop=True)
 
     prices = renko_df['price'].values
@@ -57,9 +69,9 @@ def plot_renko(renko_df, window=300):
     plt.tight_layout()
     plt.show()
 
-# Run everything
-brick_size = 10
-renko_df = generate_renko(df, brick_size)
-print(renko_df.head())
-print(f"Renko bricks generated: {len(renko_df)}")
-plot_renko(renko_df)
+# Compute ATR and Generate Renko
+atr = compute_atr(df, period=14)
+renko_df = generate_renko(df, atr)
+
+# Plot the last 300 Renko bricks
+plot_renko(renko_df, window=300)
