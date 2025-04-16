@@ -86,7 +86,7 @@ trades = [] # format of trades ['date','time','status','stoploss','target profit
 stoplosslength = 50
 targetlength = 300
 print(df.info())
-for i in range(1,len(df)):
+for i in range(90,len(df)):
     row = df.iloc[i]
     prev_row= df.iloc[i-1]
     price = row["HA_Close"]
